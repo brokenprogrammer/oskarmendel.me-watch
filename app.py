@@ -31,14 +31,25 @@ def index(name="https://www.youtube.com/embed/pXRviuL6vMY"):
                            name=name)
 
 
+# Event for when someone set a new youtube video to play.
 @socketio.on('setytube', namespace='/test')
 def test_ytube(message):
     videolink = message['data'].split('?v=')
     videoID = videolink[1]
-    newurl = "https://www.youtube.com/embed/" + videoID + "?autoplay=1"
+    newurl = "https://www.youtube.com/embed/" + videoID + \
+        "?autoplay=1&controls=0&version=3&enablejsapi=1"
     emit('update video',
-         {'data': newurl, 'count': session['receive_count']},
+         {'data': videoID, 'count': session['receive_count']},
          broadcast=True)
+
+
+@socketio.on('videoplaypause', namespace='/test')
+def test_playpause():
+    session['receive_count'] = session.get('receive_count', 0) + 1
+    # emit('my response',
+    #  {'data': 'test', 'count': session['receive_count']},
+    #  broadcast=True)
+    emit('videoplaypause', {'data': 'val'}, broadcast=True)
 
 
 @socketio.on('my event', namespace='/test')
@@ -48,6 +59,7 @@ def test_message(message):
          {'data': message['data'], 'count': session['receive_count']})
 
 
+# Event for broadcasting a message to all connected clients.
 @socketio.on('my broadcast event', namespace='/test')
 def test_broadcast_message(message):
     session['receive_count'] = session.get('receive_count', 0) + 1
@@ -99,11 +111,13 @@ def disconnect_request():
     disconnect()
 
 
+# Event used to check response time
 @socketio.on('my ping', namespace='/test')
 def ping_pong():
     emit('my pong')
 
 
+# Event for when user is connected
 @socketio.on('connect', namespace='/test')
 def test_connect():
     global thread
@@ -112,6 +126,7 @@ def test_connect():
     emit('my response', {'data': 'Connected', 'count': 0})
 
 
+# Event for when user is disconnected
 @socketio.on('disconnect', namespace='/test')
 def test_disconnect():
     print('Client disconnected', request.sid)

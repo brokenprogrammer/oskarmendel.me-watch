@@ -1,4 +1,32 @@
+var player;
+function onYouTubeIframeAPIReady() {
+    console.log("Does it happen?");
+    player = new YT.Player('player', {
+      height: '390',
+      width: '640',
+      videoId: 'Z7CTnA3dTU0',
+      playerVars: {
+        'autoplay': 1,
+        'controls': 0
+      },
+      events: {
+        'onReady': onPlayerReady
+      }
+    });
+}
+
+// The API will call this function when the video player is ready.
+function onPlayerReady(event) {
+    event.target.playVideo();
+}
+
 $(document).ready(function() {
+          //This code loads the IFrame Player API code asynchronously.
+          var tag = document.createElement('script');
+          tag.src = "https://www.youtube.com/iframe_api";
+          var firstScriptTag = document.getElementsByTagName('script')[0];
+          firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
             // Use a "/test" namespace.
             // An application can open a connection on multiple namespaces, and
             // Socket.IO will multiplex all those connections on a single
@@ -10,6 +38,13 @@ $(document).ready(function() {
             // The connection URL has the following format:
             //     http[s]://<domain>:<port>[/<namespace>]
             var socket = io.connect('http://' + document.domain + ':' + location.port + namespace);
+
+            /*var params = { allowScriptAccess: "always" };
+            var atts = { id: "myytplayer" };
+            swfobject.embedSWF("http://www.youtube.com/v/Z7CTnA3dTU0?autoplay=1&controls=0&version=3&enablejsapi=1&playerapiid=ytplayer",
+                     "ytapiplayer", "425", "356", "8", null, null, params, atts);
+
+            var ytplayer;*/
 
             // Event handler for new connections.
             // The callback function is invoked when a connection with the
@@ -29,7 +64,17 @@ $(document).ready(function() {
 
             //Event Handler for updating the youtube video in the iframe.
             socket.on('update video', function(msg) {
-                $('#videoplayer').attr('src',msg.data);
+                //$('#videoplayer').attr('src',msg.data);
+                player.loadVideoById(msg.data, 0, "large");
+            });
+
+            //When the play/pause button was pressed
+            socket.on('videoplaypause', function(msg){
+                if (player.getPlayerState() == 1) {
+                    player.pauseVideo();
+                } else {
+                    player.playVideo();
+                }
             });
 
             // Interval function that tests message latency by sending a "ping"
@@ -66,6 +111,7 @@ $(document).ready(function() {
             });
             $('form#broadcast').submit(function(event) {
                 socket.emit('my broadcast event', {data: $('#broadcast_data').val()});
+                $('#broadcast_data').val("");
                 return false;
             });
             $('form#join').submit(function(event) {
@@ -90,6 +136,10 @@ $(document).ready(function() {
             });
             $('form#ytube').submit(function(event) {
                 socket.emit('setytube', {data: $('#thelink').val()});
+                return false;
+            });
+            $('form#videoplaypause').submit(function(event) {
+                socket.emit('videoplaypause');
                 return false;
             });
 });
