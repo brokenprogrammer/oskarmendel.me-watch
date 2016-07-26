@@ -33,8 +33,11 @@ def index(name="https://www.youtube.com/embed/pXRviuL6vMY"):
 
 @socketio.on('setytube', namespace='/test')
 def test_ytube(message):
+    videolink = message['data'].split('?v=')
+    videoID = videolink[1]
+    newurl = "https://www.youtube.com/embed/" + videoID + "?autoplay=1"
     emit('update video',
-         {'data': message['data'], 'count': session['receive_count']},
+         {'data': newurl, 'count': session['receive_count']},
          broadcast=True)
 
 

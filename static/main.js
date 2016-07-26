@@ -92,4 +92,4 @@ $(document).ready(function() {
                 socket.emit('setytube', {data: $('#thelink').val()});
                 return false;
             });
-        });
+});
