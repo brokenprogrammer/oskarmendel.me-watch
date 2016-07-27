@@ -13,6 +13,11 @@ app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app, async_mode=async_mode)
 thread = None
 
+# Global values on server start.
+playing = True
+currentVideo = "Z7CTnA3dTU0"
+currentVideoTime = 0
+
 
 def background_thread():
     """Example of how to send server generated events to clients."""
@@ -36,20 +41,26 @@ def index(name="https://www.youtube.com/embed/pXRviuL6vMY"):
 def test_ytube(message):
     videolink = message['data'].split('?v=')
     videoID = videolink[1]
-    newurl = "https://www.youtube.com/embed/" + videoID + \
-        "?autoplay=1&controls=0&version=3&enablejsapi=1"
     emit('update video',
          {'data': videoID, 'count': session['receive_count']},
          broadcast=True)
 
 
+# Event for telling the clients if the video should be playing or not
 @socketio.on('videoplaypause', namespace='/test')
 def test_playpause():
-    session['receive_count'] = session.get('receive_count', 0) + 1
-    # emit('my response',
-    #  {'data': 'test', 'count': session['receive_count']},
-    #  broadcast=True)
-    emit('videoplaypause', {'data': 'val'}, broadcast=True)
+    global playing
+    if playing:
+        playing = False
+    else:
+        playing = True
+    emit('videoplaypause', {'data': playing}, broadcast=True)
+
+
+# Event for when client needs to retrieve data about what video is playing
+@socketio.on('getvideodata', namespace='/test')
+def test_getvideodata():
+    print("Returning data")
 
 
 @socketio.on('my event', namespace='/test')

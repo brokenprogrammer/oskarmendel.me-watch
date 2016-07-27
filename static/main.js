@@ -39,12 +39,8 @@ $(document).ready(function() {
             //     http[s]://<domain>:<port>[/<namespace>]
             var socket = io.connect('http://' + document.domain + ':' + location.port + namespace);
 
-            /*var params = { allowScriptAccess: "always" };
-            var atts = { id: "myytplayer" };
-            swfobject.embedSWF("http://www.youtube.com/v/Z7CTnA3dTU0?autoplay=1&controls=0&version=3&enablejsapi=1&playerapiid=ytplayer",
-                     "ytapiplayer", "425", "356", "8", null, null, params, atts);
-
-            var ytplayer;*/
+            // The volume controller for the video player.
+            var currentValue = $('#currentValue');
 
             // Event handler for new connections.
             // The callback function is invoked when a connection with the
@@ -70,7 +66,8 @@ $(document).ready(function() {
 
             //When the play/pause button was pressed
             socket.on('videoplaypause', function(msg){
-                if (player.getPlayerState() == 1) {
+                console.log("Server video playing: " + msg.data);
+                if (!msg.data) {
                     player.pauseVideo();
                 } else {
                     player.playVideo();
@@ -141,5 +138,12 @@ $(document).ready(function() {
             $('form#videoplaypause').submit(function(event) {
                 socket.emit('videoplaypause');
                 return false;
+            });
+
+            //When user changed the volume in the slider under the video.
+            $('#videovolume').change(function(){
+                currentValue.html(this.value);
+                console.log("Setting player volune to: " + currentValue.text());
+                player.setVolume(currentValue.text());
             });
 });

@@ -40,55 +40,64 @@
       </div><!-- /.container-fluid -->
     </nav>
 
-    <h1>Hello, World!</h1>
-    <p>Async mode is: <b>{{ async_mode }}</b></p>
-    <p>Average ping/latency: <b><span id="ping-pong"></span>ms</b></p>
+    <div class="content-wrapper" style="width:80%; margin-left: auto; margin-right: auto;">
+        <h1>Greetings, Traveler!</h1>
+        <p>Async mode is: <b>{{ async_mode }}</b></p>
+        <p>Average ping/latency: <b><span id="ping-pong"></span>ms</b></p>
 
-    <div class="row">
-        <div class="col-md-6">
-            <div class="vidContainer">
-                <div class="embed-responsive embed-responsive-4by3">
-                    <!--<iframe id="videoplayer" class="embed-responsive-item" width="560" height="315" src="{{name}}?autoplay=1" frameborder="0" allowfullscreen></iframe>-->
-                    <div id="player"></div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="vidContainer">
+                    <div class="embed-responsive embed-responsive-4by3">
+                        <!--<iframe id="videoplayer" class="embed-responsive-item" width="560" height="315" src="{{name}}?autoplay=1" frameborder="0" allowfullscreen></iframe>-->
+                        <div id="player"></div>
+                    </div>
+                    <div class="vidControls">
+                    <form id="videoplaypause" method="POST" action='#'>
+                          <span class="input-group-btn">
+                            <button class="btn btn-default" type="submit">Play!</button>
+                          </span>
+                          <input id="videovolume" type="range" min="0" max="100" step="1"/>
+                          <p class="note">Current value: <span id="currentValue">0</span></p>
+                    </form>
+                    </div>
                 </div>
-                <div class="vidControls">
-                <form id="videoplaypause" method="POST" action='#'>
+            </div>
+            <div class="col-md-6">
+                <div class="chatWindow">
+                    <div class="messageBox" style="height: 600px; overflow: scroll;">
+                        <h2>Receive:</h2>
+                        <div id="log"></div>
+                    </div>
+                    <form id="broadcast" method="POST" action='#'>
+                    <!--<input type="text" name="broadcast_data" id="broadcast_data" placeholder="Message">
+                    <input type="submit" value="Broadcast"> -->
+                    <div class="input-group">
+                      <input type="text" name="broadcast_data" id="broadcast_data" class="form-control" placeholder="Message">
                       <span class="input-group-btn">
-                        <button class="btn btn-default" type="submit">Play!</button>
+                        <button class="btn btn-default" type="submit">Send!</button>
                       </span>
+                    </div><!-- /input-group -->
                 </form>
                 </div>
             </div>
         </div>
-        <div class="col-md-6">
-            <div class="chatWindow">
-                <div class="messageBox" style="height: 600px; overflow: scroll;">
-                    <h2>Receive:</h2>
-                    <div id="log"></div>
-                </div>
-                <form id="broadcast" method="POST" action='#'>
-                <!--<input type="text" name="broadcast_data" id="broadcast_data" placeholder="Message">
-                <input type="submit" value="Broadcast"> -->
-                <div class="input-group">
-                  <input type="text" name="broadcast_data" id="broadcast_data" class="form-control" placeholder="Message">
-                  <span class="input-group-btn">
-                    <button class="btn btn-default" type="submit">Send!</button>
-                  </span>
-                </div><!-- /input-group -->
-            </form>
+        <div class="row">
+            <div class="col-md-4">
+                <form id="ytube" action="#" method="POST">
+                    <!--Youtube Link:<br>
+                    <input type="text" name="thelink" id="thelink"><br>
+                    <input type="submit" value="Submit">-->
+                    <div class="input-group">
+                        <input type="text" name="thelink" id="thelink" class="form-control" placeholder="YouTube Link">
+                          <span class="input-group-btn">
+                            <button class="btn btn-default" type="submit">Submit!</button>
+                          </span>
+                    </div><!-- /input-group -->
+                </form>
             </div>
         </div>
     </div>
-    <div class="row">
-        <div>
-            <form id="ytube" action="#" method="POST">
-                Youtube Link:<br>
-                <input type="text" name="thelink" id="thelink"><br>
-                <input type="submit" value="Submit">
-            </form>
-        </div>
-    </div>
-
     <img src="http://www.hdwallpaper.nu/wp-content/uploads/2015/02/kate-upton-hd-9.jpg">
 
 
