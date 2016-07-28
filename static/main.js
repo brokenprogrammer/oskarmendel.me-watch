@@ -1,3 +1,4 @@
+var username = "JohnDoe"
 var player;
 function onYouTubeIframeAPIReady() {
     console.log("Does it happen?");
@@ -10,7 +11,8 @@ function onYouTubeIframeAPIReady() {
         'controls': 0
       },
       events: {
-        'onReady': onPlayerReady
+        'onReady': onPlayerReady,
+        'onStateChange': onPlayerStateChange
       }
     });
 }
@@ -18,7 +20,29 @@ function onYouTubeIframeAPIReady() {
 // The API will call this function when the video player is ready.
 function onPlayerReady(event) {
     event.target.playVideo();
+    console.log("Total Time: " + player.getDuration());
+    console.log("Current Time: " + player.getCurrentTime());
 }
+
+// API will call this function when the video player changes states.
+function onPlayerStateChange(event) {
+    console.log("Total Time: " + player.getDuration());
+    console.log("Current Time: " + player.getCurrentTime());
+    //videototaltime.html(1902);
+    //$('#videototaltime').html(player.getDuration());
+    //$('#videocurrenttime').html(player.getCurrentTime());
+}
+
+//New browser interval to update the video player times.
+window.setInterval(function() {
+    var totaltimeMin = Math.floor(player.getDuration()/60);
+    var totaltimeSec = Math.floor(player.getDuration() - totaltimeMin * 60);
+
+    var currenttimeMin = Math.floor(player.getCurrentTime()/60);
+    var currenttimeSec = Math.floor(player.getCurrentTime() - currenttimeMin * 60);
+    $('#videototaltime').html(totaltimeMin + ":" + totaltimeSec);
+    $('#videocurrenttime').html(currenttimeMin + ":" + currenttimeSec);
+}, 1000);
 
 $(document).ready(function() {
           //This code loads the IFrame Player API code asynchronously.
@@ -26,6 +50,9 @@ $(document).ready(function() {
           tag.src = "https://www.youtube.com/iframe_api";
           var firstScriptTag = document.getElementsByTagName('script')[0];
           firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+          //Set the username form to fullscreen
+          document.getElementById("usernameSelector").style.width = "100%";
 
             // Use a "/test" namespace.
             // An application can open a connection on multiple namespaces, and
@@ -38,9 +65,6 @@ $(document).ready(function() {
             // The connection URL has the following format:
             //     http[s]://<domain>:<port>[/<namespace>]
             var socket = io.connect('http://' + document.domain + ':' + location.port + namespace);
-
-            // The volume controller for the video player.
-            var currentValue = $('#currentValue');
 
             // Event handler for new connections.
             // The callback function is invoked when a connection with the
@@ -101,7 +125,13 @@ $(document).ready(function() {
             // These accept data from the user and send it to the server in a
             // variety of ways
 
+            $('form#setusername').submit(function(event){
+                username = $('#username').val();
 
+                //Remove overlay
+                document.getElementById("usernameSelector").style.width = "0";
+                return false;
+            });
             $('form#emit').submit(function(event) {
                 socket.emit('my event', {data: $('#emit_data').val()});
                 return false;
@@ -142,8 +172,18 @@ $(document).ready(function() {
 
             //When user changed the volume in the slider under the video.
             $('#videovolume').change(function(){
-                currentValue.html(this.value);
-                console.log("Setting player volune to: " + currentValue.text());
-                player.setVolume(currentValue.text());
+                //currentValue.html(this.value);
+                console.log("Setting player volune to: " + this.value);
+                player.setVolume(this.value);
+            });
+
+            $('#videofullscreen').click(function(){
+                var playerElement = document.getElementById("player");
+
+                //Fullscreen support for most browsers.
+                var requestFullScreen = playerElement.requestFullScreen || playerElement.msRequestFullscreen || playerElement.mozRequestFullScreen || playerElement.webkitRequestFullScreen;
+                  if (requestFullScreen) {
+                    requestFullScreen.bind(playerElement)();
+                  }
             });
 });

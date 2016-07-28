@@ -11,6 +11,22 @@
 </head>
 <body>
 
+<div id="usernameSelector" class="overlay">
+<!-- Overlay when website starts that forces u to select an username -->
+    <div class="overlay-content">
+        <h1>Select an Username:</h1>
+        <form id="setusername" method="POST" action='#'>
+        <div class="input-group">
+            <input type="text" name="username" id="username" class="form-control" placeholder="Username">
+            <span class="input-group-btn">
+                <button class="btn btn-default" type="submit">Lets Watch!</button>
+            </span>
+        </div>
+        </form>
+    </div>
+
+</div>
+
     <nav class="navbar navbar-inverse">
       <div class="container-fluid">
         <!-- Brand and toggle get grouped for better mobile display -->
@@ -40,7 +56,7 @@
       </div><!-- /.container-fluid -->
     </nav>
 
-    <div class="content-wrapper" style="width:80%; margin-left: auto; margin-right: auto;">
+    <div class="content-wrapper">
         <h1>Greetings, Traveler!</h1>
         <p>Async mode is: <b>{{ async_mode }}</b></p>
         <p>Average ping/latency: <b><span id="ping-pong"></span>ms</b></p>
@@ -49,23 +65,34 @@
             <div class="col-md-6">
                 <div class="vidContainer">
                     <div class="embed-responsive embed-responsive-4by3">
-                        <!--<iframe id="videoplayer" class="embed-responsive-item" width="560" height="315" src="{{name}}?autoplay=1" frameborder="0" allowfullscreen></iframe>-->
                         <div id="player"></div>
                     </div>
                     <div class="vidControls">
                     <form id="videoplaypause" method="POST" action='#'>
-                          <span class="input-group-btn">
-                            <button class="btn btn-default" type="submit">Play!</button>
+                          <span class="input-group" style="width:100%;">
+                            <button class="btn btn-default" type="submit">
+                                <span class="glyphicon glyphicon-play"></span>
+                            </button>
+                            <input id="videovolume" type="range" min="0" max="100" step="1"/>
+                            <p id="videotime">
+                                <span id="videocurrenttime">0:00</span>/<span id="videototaltime">0:00</span>
+                            </p>
+                            <div class="vidControlgrp-right">
+                                <button class="btn btn-default" type="button">
+                                    <span class="glyphicon glyphicon-cog"></span>
+                                </button>
+                                <button id="videofullscreen" class="btn btn-default" type="button">
+                                    <span class="glyphicon glyphicon-fullscreen"></span>
+                                </button>
+                            </div>
                           </span>
-                          <input id="videovolume" type="range" min="0" max="100" step="1"/>
-                          <p class="note">Current value: <span id="currentValue">0</span></p>
                     </form>
                     </div>
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="chatWindow">
-                    <div class="messageBox" style="height: 600px; overflow: scroll;">
+                    <div class="messageBox">
                         <h2>Receive:</h2>
                         <div id="log"></div>
                     </div>

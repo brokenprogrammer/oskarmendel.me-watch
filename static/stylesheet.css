@@ -1,0 +1,54 @@
+.overlay {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 10;
+    left: 0;
+    top: 0;
+    background-color: rgb(0,0,0); /* Black fallback color */
+    background-color: rgba(0,0,0, 0.9); /* Black w/opacity */
+    overflow-x: hidden; /* Disable horizontal scroll */
+}
+
+.overlay-content {
+    position: relative;
+    color: #fff;
+    top: 25%;
+    width: 20%;
+    margin-top: 10px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.content-wrapper {
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.messageBox {
+    height: 600px;
+    overflow: scroll;
+}
+
+.vidControls {
+    background-color: #101010;
+    border-radius: 0 0 5px 5px;
+    color: #fff;
+}
+
+.vidControlgrp-right {
+    float: right;
+}
+
+#videovolume {
+    display: inline-block;
+    width: 100px;
+    vertical-align: middle;
+    cursor: pointer;
+}
+
+#videotime{
+    display: inline-block;
+    width: 140px;
+}
