@@ -78,7 +78,11 @@ $(document).ready(function() {
             // to the client. The data is then displayed in the "Received"
             // section of the page.
             socket.on('my response', function(msg) {
-                $('#log').append('<br>' + $('<div/>').text('Received #' + msg.count + ': ' + msg.data).html());
+                if (msg.user) {
+                    $('#log').append('<br>' + $('<div/>').text(msg.user + ': ' + msg.data).html());
+                } else {
+                    $('#log').append('<br>' + $('<div/>').text('Received #' + msg.count + ': ' + msg.data).html());
+                }
                 $(".messageBox").animate({ scrollTop: $(document).height() }, "slow");
             });
 
@@ -137,7 +141,7 @@ $(document).ready(function() {
                 return false;
             });
             $('form#broadcast').submit(function(event) {
-                socket.emit('my broadcast event', {data: $('#broadcast_data').val()});
+                socket.emit('my broadcast event', {data: $('#broadcast_data').val(), user: username});
                 $('#broadcast_data').val("");
                 return false;
             });

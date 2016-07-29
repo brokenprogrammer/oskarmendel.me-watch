@@ -75,8 +75,8 @@ def test_message(message):
 def test_broadcast_message(message):
     session['receive_count'] = session.get('receive_count', 0) + 1
     emit('my response',
-         {'data': message['data'], 'count': session['receive_count']},
-         broadcast=True)
+         {'data': message['data'], 'count': session['receive_count'],
+          'user': message['user']}, broadcast=True)
 
 
 @socketio.on('join', namespace='/test')
