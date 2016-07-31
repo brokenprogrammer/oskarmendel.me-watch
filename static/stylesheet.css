@@ -41,6 +41,24 @@
     float: right;
 }
 
+.vidSettings {
+    position: absolute;
+    top: auto;
+    bottom: 100%;
+    z-index: 5;
+    background-color: #fff;
+}
+
+.vidSettings ul {
+    text-decoration: none;
+    list-style-type: none;
+    padding: 0px;
+}
+
+.vidQualList li {
+    padding: 5px;
+}
+
 #videovolume {
     display: inline-block;
     width: 100px;

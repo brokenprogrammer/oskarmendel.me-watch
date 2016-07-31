@@ -1,5 +1,7 @@
 var username = "JohnDoe"
 var player;
+var qualities;
+
 function onYouTubeIframeAPIReady() {
     console.log("Does it happen?");
     player = new YT.Player('player', {
@@ -28,9 +30,16 @@ function onPlayerReady(event) {
 function onPlayerStateChange(event) {
     console.log("Total Time: " + player.getDuration());
     console.log("Current Time: " + player.getCurrentTime());
-    //videototaltime.html(1902);
-    //$('#videototaltime').html(player.getDuration());
-    //$('#videocurrenttime').html(player.getCurrentTime());
+
+    //Empty all previous available qualities.
+    $('.vidQualList').empty();
+
+    //Loop through each available quality and add them to the settings list.
+    var qualities = player.getAvailableQualityLevels();
+    for(var x = 0; x < qualities.length; x++) {
+        //Add new list item with content of the quality.
+        $('.vidQualList').append("<li>" + qualities[x] + "</li>");
+    }
 }
 
 //New browser interval to update the video player times.
@@ -83,7 +92,7 @@ $(document).ready(function() {
                 } else {
                     $('#log').append('<br>' + $('<div/>').text('Received #' + msg.count + ': ' + msg.data).html());
                 }
-                $(".messageBox").animate({ scrollTop: $(document).height() }, "slow");
+                $(".messageBox").animate({ scrollTop: $("#log").height() }, "slow");
             });
 
             //Event Handler for updating the youtube video in the iframe.
@@ -181,6 +190,7 @@ $(document).ready(function() {
                 player.setVolume(this.value);
             });
 
+            //When an user clicked the fullscreen button.
             $('#videofullscreen').click(function(){
                 var playerElement = document.getElementById("player");
 
