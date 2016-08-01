@@ -28,7 +28,8 @@
 
 .messageBox {
     height: 490px;
-    overflow: scroll;
+    overflow-x: hidden;
+    overflow-y: scroll;
 }
 
 .vidControls {
@@ -80,4 +81,13 @@
 #videotime{
     display: inline-block;
     width: 140px;
+}
+
+#playlist-history {
+    height: 490px;
+    border: 1px solid #ccc;
+}
+
+footer {
+    margin-top: 20px;
 }

@@ -116,8 +116,36 @@
                 </div>
             </div>
         </div>
-        <div class="row">
+        <!--<div class="row">
             <div class="col-md-4">
+            </div>
+        </div>-->
+        <div class="row" style="margin-top: 20px;">
+            <div class="col-md-4">
+                <div id="playlist-history">
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a data-toggle="tab" href="#playlistTab">
+                            Playlist
+                            <span class="glyphicon glyphicon-list-alt"></span>
+                        </a></li>
+                        <li><a data-toggle="tab" href="#historyTab">
+                            History
+                            <span class="glyphicon glyphicon-repeat"></span>
+                        </a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div id="playlistTab" class="tab-pane fade in active">
+                            <h3>HOME</h3>
+                            <p>Some content.</p>
+                        </div>
+                         <div id="historyTab" class="tab-pane fade">
+                            <h3>Menu 1</h3>
+                            <p>Some content in menu 1.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8">
                 <form id="ytube" action="#" method="POST">
                     <div class="input-group">
                         <input type="text" name="thelink" id="thelink" class="form-control" placeholder="YouTube Link">
@@ -129,7 +157,9 @@
             </div>
         </div>
     </div>
+    <footer>
 
+    </footer>
    <!-- <h1>Flask-SocketIO Test</h1>
     <p>Async mode is: <b>{{ async_mode }}</b></p>
     <p>Average ping/pong latency: <b><span id="ping-pong"></span>ms</b></p>

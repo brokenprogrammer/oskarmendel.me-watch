@@ -1,6 +1,5 @@
 var username = "JohnDoe"
 var player;
-var currentQuality;
 var socket;
 
 function onYouTubeIframeAPIReady() {
@@ -23,18 +22,14 @@ function onYouTubeIframeAPIReady() {
 // The API will call this function when the video player is ready.
 function onPlayerReady(event) {
     console.log("Initializing getting current video etc.");
-    socket.emit('getvideodata');
-
+    if (socket) {
+        socket.emit('getvideodata');
+    }
     event.target.playVideo();
-    console.log("Total Time: " + player.getDuration());
-    console.log("Current Time: " + player.getCurrentTime());
 }
 
 // API will call this function when the video player changes states.
 function onPlayerStateChange(event) {
-    console.log("Total Time: " + player.getDuration());
-    console.log("Current Time: " + player.getCurrentTime());
-
     //Empty all previous available qualities.
     $('.vidQualList').empty();
 

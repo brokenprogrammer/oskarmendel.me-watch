@@ -19,19 +19,6 @@ currentVideo = "vYuSRTDOa8c"
 currentVideoTime = 0
 
 
-def background_thread():
-    """Example of how to send server generated events to clients."""
-    count = 0
-    global currentVideo
-    while True:
-        socketio.sleep(10)
-        count += 1
-        print("Current video: " + currentVideo)
-        socketio.emit('my response',
-                      {'data': 'Server generated event', 'count': count},
-                      namespace='/test')
-
-
 @app.route('/')
 def index(name="https://www.youtube.com/embed/pXRviuL6vMY"):
     return render_template('index.html', async_mode=socketio.async_mode,
@@ -137,10 +124,6 @@ def ping_pong():
 # Event for when user is connected
 @socketio.on('connect', namespace='/test')
 def test_connect():
-    print("Connect")
-    # global thread
-    # if thread is None:
-    # thread = socketio.start_background_task(target=background_thread)
     emit('my response', {'data': 'Connected'})
 
 
