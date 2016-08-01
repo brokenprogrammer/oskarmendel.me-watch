@@ -27,7 +27,7 @@
 }
 
 .messageBox {
-    height: 600px;
+    height: 490px;
     overflow: scroll;
 }
 
@@ -57,6 +57,17 @@
 
 .vidQualList li {
     padding: 5px;
+}
+
+.vidQual {
+    color: #000;
+    padding: 5px;
+    text-align: center;
+    cursor: pointer;
+}
+}
+.vidQual:hover {
+    color: #bbb;
 }
 
 #videovolume {

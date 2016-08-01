@@ -15,16 +15,18 @@ thread = None
 
 # Global values on server start.
 playing = True
-currentVideo = "Z7CTnA3dTU0"
+currentVideo = "vYuSRTDOa8c"
 currentVideoTime = 0
 
 
 def background_thread():
     """Example of how to send server generated events to clients."""
     count = 0
+    global currentVideo
     while True:
         socketio.sleep(10)
         count += 1
+        print("Current video: " + currentVideo)
         socketio.emit('my response',
                       {'data': 'Server generated event', 'count': count},
                       namespace='/test')
@@ -39,16 +41,18 @@ def index(name="https://www.youtube.com/embed/pXRviuL6vMY"):
 # Event for when someone set a new youtube video to play.
 @socketio.on('setytube', namespace='/test')
 def test_ytube(message):
+    print("setting ytube")
+    global currentVideo
     videolink = message['data'].split('?v=')
     videoID = videolink[1]
-    emit('update video',
-         {'data': videoID, 'count': session['receive_count']},
-         broadcast=True)
+    currentVideo = videoID
+    emit('update video', {'data': videoID}, broadcast=True)
 
 
 # Event for telling the clients if the video should be playing or not
 @socketio.on('videoplaypause', namespace='/test')
 def test_playpause():
+    print("play / pause")
     global playing
     if playing:
         playing = False
@@ -60,7 +64,9 @@ def test_playpause():
 # Event for when client needs to retrieve data about what video is playing
 @socketio.on('getvideodata', namespace='/test')
 def test_getvideodata():
-    print("Returning data")
+    print("video data")
+    global currentVideo
+    emit('update video', {'data': currentVideo})
 
 
 @socketio.on('my event', namespace='/test')
@@ -73,9 +79,9 @@ def test_message(message):
 # Event for broadcasting a message to all connected clients.
 @socketio.on('my broadcast event', namespace='/test')
 def test_broadcast_message(message):
-    session['receive_count'] = session.get('receive_count', 0) + 1
+    print("Chat msg")
     emit('my response',
-         {'data': message['data'], 'count': session['receive_count'],
+         {'data': message['data'],
           'user': message['user']}, broadcast=True)
 
 
@@ -131,10 +137,11 @@ def ping_pong():
 # Event for when user is connected
 @socketio.on('connect', namespace='/test')
 def test_connect():
-    global thread
-    if thread is None:
-        thread = socketio.start_background_task(target=background_thread)
-    emit('my response', {'data': 'Connected', 'count': 0})
+    print("Connect")
+    # global thread
+    # if thread is None:
+    # thread = socketio.start_background_task(target=background_thread)
+    emit('my response', {'data': 'Connected'})
 
 
 # Event for when user is disconnected

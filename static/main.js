@@ -1,13 +1,14 @@
 var username = "JohnDoe"
 var player;
-var qualities;
+var currentQuality;
+var socket;
 
 function onYouTubeIframeAPIReady() {
     console.log("Does it happen?");
     player = new YT.Player('player', {
       height: '390',
       width: '640',
-      videoId: 'Z7CTnA3dTU0',
+      videoId: 'vYuSRTDOa8c',
       playerVars: {
         'autoplay': 1,
         'controls': 0
@@ -21,6 +22,9 @@ function onYouTubeIframeAPIReady() {
 
 // The API will call this function when the video player is ready.
 function onPlayerReady(event) {
+    console.log("Initializing getting current video etc.");
+    socket.emit('getvideodata');
+
     event.target.playVideo();
     console.log("Total Time: " + player.getDuration());
     console.log("Current Time: " + player.getCurrentTime());
@@ -35,10 +39,10 @@ function onPlayerStateChange(event) {
     $('.vidQualList').empty();
 
     //Loop through each available quality and add them to the settings list.
-    var qualities = player.getAvailableQualityLevels();
+   var qualities = player.getAvailableQualityLevels();
     for(var x = 0; x < qualities.length; x++) {
         //Add new list item with content of the quality.
-        $('.vidQualList').append("<li>" + qualities[x] + "</li>");
+        $('.vidQualList').append("<li class='vidQual'>" + qualities[x] + "</li>");
     }
 }
 
@@ -73,13 +77,13 @@ $(document).ready(function() {
             // Connect to the Socket.IO server.
             // The connection URL has the following format:
             //     http[s]://<domain>:<port>[/<namespace>]
-            var socket = io.connect('http://' + document.domain + ':' + location.port + namespace);
+            socket = io.connect('http://' + document.domain + ':' + location.port + namespace);
 
             // Event handler for new connections.
             // The callback function is invoked when a connection with the
             // server is established.
             socket.on('connect', function() {
-                socket.emit('my event', {data: 'I\'m connected!'});
+                socket.emit('my response', {data: 'I\'m connected!'});
             });
 
             // Event handler for server sent data.
@@ -90,7 +94,7 @@ $(document).ready(function() {
                 if (msg.user) {
                     $('#log').append('<br>' + $('<div/>').text(msg.user + ': ' + msg.data).html());
                 } else {
-                    $('#log').append('<br>' + $('<div/>').text('Received #' + msg.count + ': ' + msg.data).html());
+                    $('#log').append('<br>' + $('<div/>').text('Received #' + ': ' + msg.data).html());
                 }
                 $(".messageBox").animate({ scrollTop: $("#log").height() }, "slow");
             });
@@ -98,7 +102,9 @@ $(document).ready(function() {
             //Event Handler for updating the youtube video in the iframe.
             socket.on('update video', function(msg) {
                 //$('#videoplayer').attr('src',msg.data);
-                player.loadVideoById(msg.data, 0, "large");
+                if (player) {
+                    player.loadVideoById(msg.data, 0, "default");
+                }
             });
 
             //When the play/pause button was pressed
@@ -200,4 +206,10 @@ $(document).ready(function() {
                     requestFullScreen.bind(playerElement)();
                   }
             });
-});
+
+            $("#vidQualList.dropdown-menu.vidQualList").on("click", "li.vidQual",function(e) {
+                console.log("Clicked Dropdown. " + $(this).text());
+
+                //Set player quality to chosen button.
+                player.setPlaybackQuality($(this).text());
+            });});
