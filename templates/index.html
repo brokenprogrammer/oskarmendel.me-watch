@@ -22,7 +22,7 @@
         <div class="input-group">
             <input type="text" name="username" id="username" class="form-control" placeholder="Username">
             <span class="input-group-btn">
-                <button class="btn btn-default" type="submit">Lets Watch!</button>
+                <button id="usernamesubmit" class="btn btn-default" type="submit" disabled>Lets Watch!</button>
             </span>
         </div>
         </form>
@@ -139,8 +139,11 @@
                             <p>Some content.</p>
                         </div>
                          <div id="historyTab" class="tab-pane fade">
-                            <h3>Menu 1</h3>
-                            <p>Some content in menu 1.</p>
+                            <!--<div class="video">
+                                <div class="video-img"></div>
+                                <h5 class="video-title"></h5>
+                                <p class="video-desc"></p>
+                            </div>-->
                         </div>
                     </div>
                 </div>
@@ -154,6 +157,9 @@
                           </span>
                     </div><!-- /input-group -->
                 </form>
+                <div id="search-results">
+
+                </div>
             </div>
         </div>
     </div>
@@ -195,5 +201,6 @@
     <h2>Receive:</h2>
     <div id="log"></div>-->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://apis.google.com/js/client.js?onload=googleApiClientReady"></script>
 </body>
 </html>

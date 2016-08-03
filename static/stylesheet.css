@@ -32,6 +32,33 @@
     overflow-y: scroll;
 }
 
+.video {
+    width: 90%;
+    height: 100px;
+    border: 1px solid #ccc;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+.video-img {
+    display: inline-block;
+    height: 90px;
+    width: 90px;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.video-title {
+    display: inline-block;
+    width: 60%;
+    font-size: 12px;
+    font-weight: bold;
+    vertical-align: top;
+}
+
 .vidControls {
     background-color: #101010;
     border-radius: 0 0 5px 5px;
@@ -84,10 +111,28 @@
 }
 
 #playlist-history {
+    border: 1px solid #ccc;
+    overflow: hidden;
+}
+
+#playlistTab {
     height: 490px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+
+#historyTab {
+    height: 490px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+
+#search-results {
+    height: 490px;
+    width: 100%;
     border: 1px solid #ccc;
 }
 
 footer {
-    margin-top: 20px;
+    margin-top: 100px;
 }

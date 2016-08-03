@@ -17,6 +17,7 @@ thread = None
 playing = True
 currentVideo = "vYuSRTDOa8c"
 currentVideoTime = 0
+videoHistory = []
 
 
 @app.route('/')
@@ -30,9 +31,13 @@ def index(name="https://www.youtube.com/embed/pXRviuL6vMY"):
 def test_ytube(message):
     print("setting ytube")
     global currentVideo
+    global videoHistory
     videolink = message['data'].split('?v=')
     videoID = videolink[1]
     currentVideo = videoID
+    if videoID not in videoHistory:
+        videoHistory.append(videoID)
+    print(videoHistory)
     emit('update video', {'data': videoID}, broadcast=True)
 
 
@@ -54,6 +59,12 @@ def test_getvideodata():
     print("video data")
     global currentVideo
     emit('update video', {'data': currentVideo})
+
+
+@socketio.on('inithistory', namespace='/test')
+def test_inithistory():
+    global videoHistory
+    emit('sethistory', {'data': videoHistory})
 
 
 @socketio.on('my event', namespace='/test')
