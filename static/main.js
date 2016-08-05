@@ -70,14 +70,21 @@ $(document).ready(function() {
 
                         //Execute the request
                         request.execute(function(response) {
-                        var results = response.result;
-                        console.log(results);
-                        var title = results.items[0].snippet.title;
-                        var description = results.items[0].snippet.description;
-                        var thumbnail = results.items[0].snippet.thumbnails.default.url;
-                        //$('#historyTab').append('<br>' + $('<div/>').text(title + description + thumbnail).html());
-
-                        $('#historyTab').append('<div class="video"><div class="video-img" style="background-image: url(' + thumbnail + ')"></div><h5 class="video-title">' + title + '</h5></div>');
+                            var results = response.result;
+                            console.log(results);
+                            var title = results.items[0].snippet.title;
+                            var videoid = results.items[0].id.videoId;
+                            var description = results.items[0].snippet.description;
+                            var thumbnail = results.items[0].snippet.thumbnails.default.url;
+                            var alreadyExist = false;
+                            $('.video').each(function(index) {
+                                if ($(this).has('.video-title').text() == movietitle) {
+                                    alreadyExist = true;
+                                }
+                            });
+                            if (!alreadyExist) {
+                                $('#historyTab').append('<div class="video"><div class="video-img" style="background-image: url(' + thumbnail + ')"></div><h5 class="video-title">' + title + '</h5><span class="video-id">' + videoid +'</span></div>');
+                            }
                         });
                     }
                     historyRetrieved = true;
@@ -102,16 +109,18 @@ $(document).ready(function() {
                         request.execute(function(response) {
                         var results = response.result;
                         var title = results.items[0].snippet.title;
+                        var videoid = results.items[0].id.videoId;
                         var description = results.items[0].snippet.description;
                         var thumbnail = results.items[0].snippet.thumbnails.default.url;
                         var alreadyExist = false;
                         $('.video').each(function(index) {
-                            if ($(this).has('.video-title').text() == title) {
+                            if ($(this).has('.video-title').text() == movietitle) {
                                 alreadyExist = true;
                             }
                         });
                         if (!alreadyExist) {
-                            $('#historyTab').append('<div class="video"><div class="video-img" style="background-image: url(' + thumbnail + ')"></div><h5 class="video-title">' + title + '</h5></div>');
+                            console.log("Appending new video: " + title);
+                            $('#historyTab').append('<div class="video"><div class="video-img" style="background-image: url(' + thumbnail + ')"></div><h5 class="video-title">' + title + '</h5><span class="video-id">' + videoid +'</span></div>');
                         }
                         });
 
@@ -161,6 +170,7 @@ $(document).ready(function() {
                 document.getElementById("usernameSelector").style.width = "0";
 
                 //Load Curent video:
+                console.log("Initializing getting current video etc.");
                 socket.emit('getvideodata');
                 socket.emit('inithistory');
                 return false;
@@ -228,6 +238,13 @@ $(document).ready(function() {
                 player.setPlaybackQuality($(this).text());
             });
 
+            $("#historyTab").on("click", "div.video",function(e) {
+                console.log("Now starting video: " + $(this).text());
+                var videoID = $(this).find("span").text();
+                console.log("Video id: " + videoID);
+                socket.emit('setytube', {data: 'https://www.youtube.com/watch?v='+videoID});
+            });
+
         });
 
 function addYoutubeIframeAPI() {
@@ -259,7 +276,6 @@ function onYouTubeIframeAPIReady() {
 
 // The API will call this function when the video player is ready.
 function onPlayerReady(event) {
-    console.log("Initializing getting current video etc.");
     if (connected) {
         $('#usernamesubmit').prop('disabled', false);
     }
