@@ -43,6 +43,11 @@
     cursor: pointer;
 }
 
+.video-search {
+    width: 49% !important;
+    display: inline-block !important;
+}
+
 .video-id {
     display: none;
 }
@@ -137,6 +142,8 @@
     height: 490px;
     width: 100%;
     border: 1px solid #ccc;
+    overflow-x: hidden;
+    overflow-y: scroll;
 }
 
 footer {

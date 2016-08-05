@@ -78,11 +78,11 @@ $(document).ready(function() {
                             var thumbnail = results.items[0].snippet.thumbnails.default.url;
                             var alreadyExist = false;
                             $('.video').each(function(index) {
-                                if ($(this).has('.video-title').text() == movietitle) {
+                                if ($(this).find("h5").text() == title) {
                                     alreadyExist = true;
                                 }
                             });
-                            if (!alreadyExist) {
+                            if (alreadyExist == false) {
                                 $('#historyTab').append('<div class="video"><div class="video-img" style="background-image: url(' + thumbnail + ')"></div><h5 class="video-title">' + title + '</h5><span class="video-id">' + videoid +'</span></div>');
                             }
                         });
@@ -114,11 +114,11 @@ $(document).ready(function() {
                         var thumbnail = results.items[0].snippet.thumbnails.default.url;
                         var alreadyExist = false;
                         $('.video').each(function(index) {
-                            if ($(this).has('.video-title').text() == movietitle) {
+                            if ($(this).find("h5").text() == title) {
                                 alreadyExist = true;
                             }
                         });
-                        if (!alreadyExist) {
+                        if (alreadyExist == false) {
                             console.log("Appending new video: " + title);
                             $('#historyTab').append('<div class="video"><div class="video-img" style="background-image: url(' + thumbnail + ')"></div><h5 class="video-title">' + title + '</h5><span class="video-id">' + videoid +'</span></div>');
                         }
@@ -205,7 +205,34 @@ $(document).ready(function() {
                 return false;
             });
             $('form#ytube').submit(function(event) {
-                socket.emit('setytube', {data: $('#thelink').val()});
+                //socket.emit('setytube', {data: $('#thelink').val()});
+                $('#search-results').empty();
+                var request = gapi.client.youtube.search.list({
+                            part: 'snippet',
+                            maxResults: 20,
+                            order: 'relevance',
+                            type: 'video',
+                            q: $('#thelink').val()
+                        });
+
+                        //Execute the request
+                        request.execute(function(response) {
+                        var results = response.result;
+                        var title;
+                        var videoid;
+                        var description;
+                        var thumbnail;
+
+                        for (var i = 0; i < results.items.length; i++) {
+                            title = results.items[i].snippet.title;
+                            videoid = results.items[i].id.videoId;
+                            description = results.items[i].snippet.description;
+                            thumbnail = results.items[i].snippet.thumbnails.default.url;
+
+                            $('#search-results').append('<div class="video video-search"><div class="video-img" style="background-image: url(' + thumbnail + ')"></div><h5 class="video-title">' + title + '</h5><span class="video-id">' + videoid +'</span></div>');
+                        }
+                        });
+
                 return false;
             });
             $('form#videoplaypause').submit(function(event) {
@@ -239,6 +266,13 @@ $(document).ready(function() {
             });
 
             $("#historyTab").on("click", "div.video",function(e) {
+                console.log("Now starting video: " + $(this).text());
+                var videoID = $(this).find("span").text();
+                console.log("Video id: " + videoID);
+                socket.emit('setytube', {data: 'https://www.youtube.com/watch?v='+videoID});
+            });
+
+            $("#search-results").on("click", "div.video",function(e) {
                 console.log("Now starting video: " + $(this).text());
                 var videoID = $(this).find("span").text();
                 console.log("Video id: " + videoID);
