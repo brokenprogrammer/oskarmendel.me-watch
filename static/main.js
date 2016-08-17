@@ -71,7 +71,6 @@ $(document).ready(function() {
                         //Execute the request
                         request.execute(function(response) {
                             var results = response.result;
-                            console.log(results);
                             var title = results.items[0].snippet.title;
                             var videoid = results.items[0].id.videoId;
                             var description = results.items[0].snippet.description;
@@ -113,7 +112,7 @@ $(document).ready(function() {
                         var description = results.items[0].snippet.description;
                         var thumbnail = results.items[0].snippet.thumbnails.default.url;
                         var alreadyExist = false;
-                        $('.video').each(function(index) {
+                        $('#historyTab.video').each(function(index) {
                             if ($(this).find("h5").text() == title) {
                                 alreadyExist = true;
                             }
@@ -136,29 +135,6 @@ $(document).ready(function() {
                     player.playVideo();
                 }
             });
-
-            // Interval function that tests message latency by sending a "ping"
-            // message. The server then responds with a "pong" message and the
-            // round trip time is measured.
-            /*var ping_pong_times = [];
-            var start_time;
-            window.setInterval(function() {
-                start_time = (new Date).getTime();
-                socket.emit('my ping');
-            }, 1000);
-
-            // Handler for the "pong" message. When the pong is received, the
-            // time from the ping is stored, and the average of the last 30
-            // samples is average and displayed.
-            socket.on('my pong', function() {
-                var latency = (new Date).getTime() - start_time;
-                ping_pong_times.push(latency);
-                ping_pong_times = ping_pong_times.slice(-30); // keep last 30 samples
-                var sum = 0;
-                for (var i = 0; i < ping_pong_times.length; i++)
-                    sum += ping_pong_times[i];
-                $('#ping-pong').text(Math.round(10 * sum / ping_pong_times.length) / 10);
-            });*/
 
             // Handlers for the different forms in the page.
             // These accept data from the user and send it to the server in a
@@ -184,22 +160,6 @@ $(document).ready(function() {
                 $('#broadcast_data').val("");
                 return false;
             });
-            $('form#join').submit(function(event) {
-                socket.emit('join', {room: $('#join_room').val()});
-                return false;
-            });
-            $('form#leave').submit(function(event) {
-                socket.emit('leave', {room: $('#leave_room').val()});
-                return false;
-            });
-            $('form#send_room').submit(function(event) {
-                socket.emit('my room event', {room: $('#room_name').val(), data: $('#room_data').val()});
-                return false;
-            });
-            $('form#close').submit(function(event) {
-                socket.emit('close room', {room: $('#close_room').val()});
-                return false;
-            });
             $('form#disconnect').submit(function(event) {
                 socket.emit('disconnect request');
                 return false;
@@ -218,16 +178,32 @@ $(document).ready(function() {
                         //Execute the request
                         request.execute(function(response) {
                         var results = response.result;
+                        console.log(results);
                         var title;
                         var videoid;
                         var description;
                         var thumbnail;
+                        var duration;
 
                         for (var i = 0; i < results.items.length; i++) {
                             title = results.items[i].snippet.title;
                             videoid = results.items[i].id.videoId;
                             description = results.items[i].snippet.description;
                             thumbnail = results.items[i].snippet.thumbnails.default.url;
+
+                            //Getting video length through separate request.
+                            request = gapi.client.youtube.videos.list({
+                                part: 'id, contentDetails',
+                                id: videoid
+                            });
+                            request.execute(function(response) {
+                                var thevideoid = response.result.items[0].id;
+                                duration = response.result.items[0].contentDetails.duration;
+                                //Find span that contains the video id and add duration to the video class.
+                                $('span')
+                                  .filter(function(){return $(this).html() == thevideoid; })
+                                  .after("<p>" + duration + "</p>");
+                            });
 
                             $('#search-results').append('<div class="video video-search"><div class="video-img" style="background-image: url(' + thumbnail + ')"></div><h5 class="video-title">' + title + '</h5><span class="video-id">' + videoid +'</span></div>');
                         }
@@ -275,7 +251,8 @@ $(document).ready(function() {
             $("#search-results").on("click", "div.video",function(e) {
                 console.log("Now starting video: " + $(this).text());
                 var videoID = $(this).find("span").text();
-                console.log("Video id: " + videoID);
+                var videoDur = $(this).find(p).text();
+                console.log("Video id: " + videoID + " Video Duration: " + videoDur);
                 socket.emit('setytube', {data: 'https://www.youtube.com/watch?v='+videoID});
             });
 
@@ -339,4 +316,3 @@ window.setInterval(function() {
     $('#videototaltime').html(totaltimeMin + ":" + totaltimeSec);
     $('#videocurrenttime').html(currenttimeMin + ":" + currenttimeSec);
 }, 1000);
-

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
+import time
 from flask import Flask, render_template, session, request
-from flask_socketio import SocketIO, emit, join_room, leave_room, \
-    close_room, rooms, disconnect
+from flask_socketio import SocketIO, emit
 
 # Set this variable to "threading", "eventlet" or "gevent" to test the
 # different async modes, or leave it set to None for the application to choose
@@ -16,7 +16,8 @@ thread = None
 # Global values on server start.
 playing = True
 currentVideo = "vYuSRTDOa8c"
-currentVideoTime = 0
+currentVideoStartTime = 0
+currentVideoMaxTime = 0
 videoHistory = []
 
 
@@ -32,9 +33,13 @@ def test_ytube(message):
     print("setting ytube")
     global currentVideo
     global videoHistory
+    global currentVideoMaxTime
+    global currentVideoStartTime
     videolink = message['data'].split('?v=')
     videoID = videolink[1]
     currentVideo = videoID
+    currentVideoMaxTime = message['time']
+    currentVideoStartTime = time.time()
     if videoID not in videoHistory:
         videoHistory.append(videoID)
     print(videoHistory)
@@ -58,7 +63,9 @@ def test_playpause():
 def test_getvideodata():
     print("video data")
     global currentVideo
-    emit('update video', {'data': currentVideo})
+    global currentVideoStartTime
+    elapsedTime = time.time() - currentVideoStartTime
+    emit('update video', {'data': currentVideo, 'time': elapsedTime})
 
 
 @socketio.on('inithistory', namespace='/test')
@@ -81,55 +88,6 @@ def test_broadcast_message(message):
     emit('my response',
          {'data': message['data'],
           'user': message['user']}, broadcast=True)
-
-
-@socketio.on('join', namespace='/test')
-def join(message):
-    join_room(message['room'])
-    session['receive_count'] = session.get('receive_count', 0) + 1
-    emit('my response',
-         {'data': 'In rooms: ' + ', '.join(rooms()),
-          'count': session['receive_count']})
-
-
-@socketio.on('leave', namespace='/test')
-def leave(message):
-    leave_room(message['room'])
-    session['receive_count'] = session.get('receive_count', 0) + 1
-    emit('my response',
-         {'data': 'In rooms: ' + ', '.join(rooms()),
-          'count': session['receive_count']})
-
-
-@socketio.on('close room', namespace='/test')
-def close(message):
-    session['receive_count'] = session.get('receive_count', 0) + 1
-    emit('my response', {'data': 'Room ' + message['room'] + ' is closing.',
-                         'count': session['receive_count']},
-         room=message['room'])
-    close_room(message['room'])
-
-
-@socketio.on('my room event', namespace='/test')
-def send_room_message(message):
-    session['receive_count'] = session.get('receive_count', 0) + 1
-    emit('my response',
-         {'data': message['data'], 'count': session['receive_count']},
-         room=message['room'])
-
-
-@socketio.on('disconnect request', namespace='/test')
-def disconnect_request():
-    session['receive_count'] = session.get('receive_count', 0) + 1
-    emit('my response',
-         {'data': 'Disconnected!', 'count': session['receive_count']})
-    disconnect()
-
-
-# Event used to check response time
-@socketio.on('my ping', namespace='/test')
-def ping_pong():
-    emit('my pong')
 
 
 # Event for when user is connected
