@@ -43,6 +43,8 @@ def test_ytube(message):
     if videoID not in videoHistory:
         videoHistory.append(videoID)
     print(videoHistory)
+    print("Max Time: " + currentVideoMaxTime)
+    print("Start Time: ", currentVideoStartTime)
     emit('update video', {'data': videoID}, broadcast=True)
 
 
@@ -65,7 +67,10 @@ def test_getvideodata():
     global currentVideo
     global currentVideoStartTime
     elapsedTime = time.time() - currentVideoStartTime
-    emit('update video', {'data': currentVideo, 'time': elapsedTime})
+    newuser = True
+    print(elapsedTime)
+    emit('update video', {'data': currentVideo,
+                          'time': elapsedTime, 'newuser': newuser})
 
 
 @socketio.on('inithistory', namespace='/test')
